@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">GoogleMapsBase</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="propertyDetail">Property Detail</string>
+    <string name="owner">Owner</string>
+    <string name="mailingaddress">Mailing Address</string>
+    <string name="calculated_acres">Calculated Acres</string>
+    <string name="pleaseWait">Please Wait...</string>
+    <string name="pleaseWaitDescription">This will take some time to complete this request!</string>
+</resources>
