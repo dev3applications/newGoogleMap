@@ -77,7 +77,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         mMap.setOnMapClickListener(this)
 
 
-        val tileProvider: TileProvider = object : UrlTileProvider(256, 256) {
+      /*  val tileProvider: TileProvider = object : UrlTileProvider(256, 256) {
             @Synchronized
             override fun getTileUrl(x: Int, y: Int, zoom: Int): URL? {
                 Log.e(TAG, "titleProvider")
@@ -102,9 +102,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                 return url
             }
         }
-
+*/
         mapCacheTileOverlay =
-            mMap.addTileOverlay(TileOverlayOptions().tileProvider(ParcelCacheTileProvider()).zIndex(-500f))
+            mMap.addTileOverlay(TileOverlayOptions().tileProvider(ParcelCacheTileProvider()))
         // mapCacheTileOverlay = mMap.addTileOverlay(TileOverlayOptions().tileProvider(MapCacheTileProvider()))
     }
 

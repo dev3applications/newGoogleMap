@@ -63,12 +63,13 @@ class ParcelCacheManager {
         private fun isThereSpaceToWrite(): Boolean {
             //update this function to check for space on the device to ensure that we have space to store the jpg
             //this will return free space on device
-            val statFs = StatFs(Environment.getExternalStorageDirectory().getAbsolutePath())
+          /*  val statFs = StatFs(Environment.getExternalStorageDirectory().getAbsolutePath())
             val Free = statFs.availableBlocks * statFs.blockSize / 1048576
             if (Free > 1000)
                 return true
             else
-                return false
+                return false*/
+            return true
         }
 
         private fun store(x: Int, y: Int, z: Int): Tile {
@@ -102,7 +103,10 @@ class ParcelCacheManager {
         }
 
         private fun getTileUrl(x: Int, y: Int, z: Int): URL? {
-            return URL("https://mt1.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}")
+          /*  return URL("https://mt1.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}")*/
+            var url="https://reportallusa.com/dyn/tile.py?map=siteroot/Base_Layers.map&layer=Parcels&mode=tile&tilemode=gmap&tile=${x}+${y}+${z}&client=ozEw4rZCd9"
+            Log.e("response",url)
+            return URL("https://reportallusa.com/dyn/tile.py?map=siteroot/Base_Layers.map&layer=Parcels&mode=tile&tilemode=gmap&tile=${x}+${y}+${z}&client=ozEw4rZCd9")
         }
 
         fun getTile(x: Int, y: Int, z: Int): Tile {
