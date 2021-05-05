@@ -5,6 +5,8 @@ import com.google.android.gms.maps.model.Tile
 import com.google.android.gms.maps.model.TileProvider
 
 class ParcelCacheTileProvider : TileProvider {
+
+
     override fun getTile(x: Int, y: Int, z: Int): Tile? {
         return ParcelCacheManager.getTile(x, y, z)
     }

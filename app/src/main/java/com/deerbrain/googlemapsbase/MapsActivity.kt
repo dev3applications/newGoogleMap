@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.deerbrain.googlemapsbase.MapCache.MapCacheManager
 import com.deerbrain.googlemapsbase.MapCache.MapCacheTileProvider
+import com.deerbrain.googlemapsbase.Parcel.ParcelCacheDummy
 import com.deerbrain.googlemapsbase.Parcel.ParcelCacheTileProvider
 import com.deerbrain.googlemapsbase.Parcel.ParcelDataManager
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -81,7 +82,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             override fun getTileUrl(x: Int, y: Int, zoom: Int): URL? {
                 Log.e(TAG, "titleProvider")
                 Log.e(TAG, x.toString() + ",,,,," + y + "...." + zoom)
-                // The moon tile coordinate system is reversed.  This is not normal.
                 val reversedY = (1 shl zoom) - y - 1
                 val s = String.format(
                     Locale.US,
@@ -98,12 +98,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                 }
                 Thread(Runnable {
                     var tile = MapCacheTileProvider().getTile(x, y, zoom)
-
                 }).start()
                 return url
             }
         }
-        mapCacheTileOverlay = mMap.addTileOverlay(TileOverlayOptions().tileProvider(tileProvider))
+
+        mapCacheTileOverlay =
+            mMap.addTileOverlay(TileOverlayOptions().tileProvider(ParcelCacheTileProvider()).zIndex(-500f))
         // mapCacheTileOverlay = mMap.addTileOverlay(TileOverlayOptions().tileProvider(MapCacheTileProvider()))
     }
 
