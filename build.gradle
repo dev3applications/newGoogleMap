@@ -4,6 +4,7 @@ buildscript {
     ext{
         okhttpLoggingVersion = '4.7.2'
         retrofitVersion = '2.9.0'
+        gsonVersion = '2.8.2'
     }
     repositories {
         google()

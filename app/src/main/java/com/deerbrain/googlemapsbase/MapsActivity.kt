@@ -30,7 +30,8 @@ enum class ActualSystemState { initial, mapTiles, parcelTiles, parcelData }
 
 private const val TAG = "MapsActivity"
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClickListener {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClickListener,
+    DrawPolyLines {
 
     lateinit var mMap: GoogleMap
     lateinit var progressDialog: ProgressDialog
@@ -77,32 +78,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         mMap.setOnMapClickListener(this)
 
 
-      /*  val tileProvider: TileProvider = object : UrlTileProvider(256, 256) {
-            @Synchronized
-            override fun getTileUrl(x: Int, y: Int, zoom: Int): URL? {
-                Log.e(TAG, "titleProvider")
-                Log.e(TAG, x.toString() + ",,,,," + y + "...." + zoom)
-                val reversedY = (1 shl zoom) - y - 1
-                val s = String.format(
-                    Locale.US,
-                    "https://reportallusa.com/dyn/tile.py?map=siteroot/Base_Layers.map&layer=Parcels&mode=tile&tilemode=gmap&tile=8935+12980+15&client=ozEw4rZCd9",
-                    zoom,
-                    x,
-                    reversedY
-                )
-                var url: URL? = null
-                url = try {
-                    URL(s)
-                } catch (e: MalformedURLException) {
-                    throw AssertionError(e)
-                }
-                Thread(Runnable {
-                    var tile = MapCacheTileProvider().getTile(x, y, zoom)
-                }).start()
-                return url
-            }
-        }
-*/
+
         mapCacheTileOverlay =
             mMap.addTileOverlay(TileOverlayOptions().tileProvider(ParcelCacheTileProvider()))
         // mapCacheTileOverlay = mMap.addTileOverlay(TileOverlayOptions().tileProvider(MapCacheTileProvider()))
@@ -159,14 +135,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         //Show an activity Blocker with spinning wheel and "loading Data"
         ParcelDataManager.fetchParcelData(coordinate) {
             //thisis a completion block
-            Log.e(TAG, it?.results?.get(0)?.geom_as_wkt.toString())
             progressDialog.dismiss()
-            showDialog(
-                it?.results?.get(0)?.owner.toString(),
-                it?.results?.get(0)?.mail_address1.toString(),
-                it?.results?.get(0)?.acreage_calc.toString(),
-                it?.results?.get(0)?.geom_as_wkt.toString()
-            )
+
+            DetailInfoFragment.newInstance(it!!,this).show(supportFragmentManager, "")
+
             //Main Thread
             //hide activity blocker
             //let shape = 2Dshape from Parcel data
@@ -175,56 +147,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         }
     }
 
-    fun showDialog(Name: String, Address: String, calculated: String, polygone: String) {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setContentView(R.layout.detail_dialog)
-        var ownerName = dialog.findViewById<TextView>(R.id.ownerName)
-        ownerName.setText(resources.getString(R.string.owner) + " :" + Name)
 
-        var mailingAddress = dialog.findViewById<TextView>(R.id.mailingAddress)
-        mailingAddress.setText(resources.getString(R.string.mailingaddress) + " " + Address)
 
-        var calculatedAcres = dialog.findViewById<TextView>(R.id.calculatedAcres)
 
-        calculatedAcres.setText(resources.getString(R.string.calculated_acres) + "  " + calculated)
-        var cancel = dialog.findViewById<Button>(R.id.close).setOnClickListener({
-            if (this::polyLines.isInitialized) {
-                polyLines.remove()
-            }
-            dialog.dismiss()
-        })
-        var storeShape = dialog.findViewById<Button>(R.id.storeShapeSize).setOnClickListener({
-            var list = mutableListOf<LatLng>()
-            var polygoneValue =
-                polygone.substring(polygone.indexOf("(((") + 3, polygone.indexOf(")))") - 3)
-                    .replace("(", "").replace(")", "")
-
-            var array: List<String> = polygoneValue.split(",")
-            for (i in 0 until array.size) {
-                var latlngArray: List<String> = array.get(i).split(" ")
-                list.add(LatLng(latlngArray[1].toDouble(), latlngArray[0].toDouble()))
-            }
-            drawPolyGone(list)
-            dialog.dismiss()
-        })
-
-        dialog.show()
-    }
-
-    fun drawPolyGone(list: List<LatLng>) {
-        Log.e(TAG, list.toString())
+    override fun drawPolyLine(list: List<LatLng>) {
+        Log.e(TAG, "drawPolyLine")
         var rectOption = PolylineOptions().width(5f).color(Color.RED).addAll(list).geodesic(true)
         if (rectOption != null)
             polyLines = mMap.addPolyline(rectOption)
-
-
     }
 
-    private fun checkTileExists(x: Int, y: Int, zoom: Int): Boolean {
-        val minZoom = 12
-        val maxZoom = 16
-        return zoom in minZoom..maxZoom
+    override fun removePolyLine() {
+        Log.e(TAG, "removePolyLine")
+        if (this::polyLines.isInitialized) {
+            polyLines.remove()
+        }
     }
 }

@@ -7,5 +7,5 @@ import retrofit2.http.Url
 interface WebService {
 
     @GET
-     fun getDataFromServer(@Url url:String): Call<DataResponse>
+     fun getDataFromServer(@Url url:String): Call<ReportAllData>
 }

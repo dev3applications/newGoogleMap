@@ -2,7 +2,7 @@ package com.deerbrain.googlemapsbase.webrequest
 
 import com.google.gson.annotations.SerializedName
 
-data class DataResponse (
+data class ReportAllData (
     @SerializedName("status") val status : String,
     @SerializedName("count") val count : Int,
     @SerializedName("page") val page : Int,
@@ -13,7 +13,6 @@ data class DataResponse (
 
 
 data class Results (
-
     @SerializedName("parcel_id") val parcel_id : String,
     @SerializedName("county_id") val county_id : Int,
     @SerializedName("rausa_id") val rausa_id : Int,

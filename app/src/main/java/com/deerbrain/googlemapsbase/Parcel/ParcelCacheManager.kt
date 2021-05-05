@@ -63,13 +63,18 @@ class ParcelCacheManager {
         private fun isThereSpaceToWrite(): Boolean {
             //update this function to check for space on the device to ensure that we have space to store the jpg
             //this will return free space on device
-          /*  val statFs = StatFs(Environment.getExternalStorageDirectory().getAbsolutePath())
-            val Free = statFs.availableBlocks * statFs.blockSize / 1048576
-            if (Free > 1000)
+            val stat = StatFs(Environment.getExternalStorageDirectory().path)
+            val bytesAvailable = stat.blockSize.toLong() * stat.blockCount.toLong()
+            val megAvailable = bytesAvailable / 1048576
+            val path: File = Environment.getDataDirectory()
+            val stat2 = StatFs(path.path)
+            val blockSize = stat2.blockSize.toLong()
+            val availableBlocks = stat2.availableBlocks.toLong()
+            if (availableBlocks > 10000)
                 return true
             else
-                return false*/
-            return true
+
+                return false
         }
 
         private fun store(x: Int, y: Int, z: Int): Tile {
@@ -103,9 +108,10 @@ class ParcelCacheManager {
         }
 
         private fun getTileUrl(x: Int, y: Int, z: Int): URL? {
-          /*  return URL("https://mt1.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}")*/
-            var url="https://reportallusa.com/dyn/tile.py?map=siteroot/Base_Layers.map&layer=Parcels&mode=tile&tilemode=gmap&tile=${x}+${y}+${z}&client=ozEw4rZCd9"
-            Log.e("response",url)
+            /*  return URL("https://mt1.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}")*/
+            var url =
+                "https://reportallusa.com/dyn/tile.py?map=siteroot/Base_Layers.map&layer=Parcels&mode=tile&tilemode=gmap&tile=${x}+${y}+${z}&client=ozEw4rZCd9"
+            Log.e("response", url)
             return URL("https://reportallusa.com/dyn/tile.py?map=siteroot/Base_Layers.map&layer=Parcels&mode=tile&tilemode=gmap&tile=${x}+${y}+${z}&client=ozEw4rZCd9")
         }
 

@@ -3,7 +3,7 @@ package com.deerbrain.googlemapsbase.Parcel
 import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
-import com.deerbrain.googlemapsbase.webrequest.DataResponse
+import com.deerbrain.googlemapsbase.webrequest.ReportAllData
 import com.deerbrain.googlemapsbase.webrequest.RetrofitClient
 import com.google.android.gms.maps.model.LatLng
 import retrofit2.Call
@@ -24,23 +24,47 @@ class ParcelDataManager {
 //when the information is received the Build a ParcelDetailInfo and return that info
         public fun fetchParcelData(
             latLng: LatLng,
-            callBack: (DataResponse?)->Unit
+            callBack: (ParcelDetailInfo?) -> Unit
         ) {
             val url = buildURL(latLng)
             Log.e(TAG, url.toString())
             RetrofitClient.createWebService().getDataFromServer(url.toString())
-                .enqueue(object : Callback<DataResponse> {
-                    override fun onFailure(call: Call<DataResponse>, t: Throwable) {
+                .enqueue(object : Callback<ReportAllData> {
+                    override fun onFailure(call: Call<ReportAllData>, t: Throwable) {
                         callBack(null)
                     }
 
                     override fun onResponse(
-                        call: Call<DataResponse>,
-                        response: Response<DataResponse>
-                    ) {
+                        call: Call<ReportAllData>,
 
+                        response: Response<ReportAllData>
+                    ) {
+                        var list = mutableListOf<LatLng>()
+                        var polyline= response.body()?.results?.get(0)?.geom_as_wkt.toString()
+                        var polygoneValue =
+                           polyline.substring(polyline.indexOf("(((") + 3, polyline.indexOf(")))") - 3)
+                                .replace("(", "").replace(")", "")
+
+                        var array: List<String> = polygoneValue.split(",")
+                        for (i in 0 until array.size) {
+                            var latlngArray: List<String> = array.get(i).split(" ")
+                            list.add(LatLng(latlngArray[1].toDouble(), latlngArray[0].toDouble()))
+                        }
+                        var parcelDetail = ParcelDetailInfo(
+                            response.body()?.results?.get(0)?.owner.toString(),
+                            response.body()?.results?.get(0)?.mail_address1 + response.body()?.results?.get(
+                                0
+                            )?.mail_address3,
+                            response.body()?.results?.get(0)?.mail_address1.toString(),response.body()?.results?.get(
+                                0
+                            )?.mail_address3.toString(),
+                            response.body()?.results?.get(0)?.acreage_calc.toString(),
+                            response.body()?.results?.get(0)?.acreage_deeded.toString(),
+                            "",
+                            list
+                        )
                         Log.e(TAG, response.toString())
-                        callBack(response.body())
+                        callBack(parcelDetail)
                     }
                 })
 

@@ -10,8 +10,9 @@ data class ParcelDetailInfo (
     val address2: String,
     val calcAcres: String,
     val deedAcres: String,
-    val shapeFile: String,
-    val shape2D: ArrayList<ArrayList<LatLng>>
+    val shapeFile: String,/*
+    val shape2D: MutableList<ArrayList<LatLng>>*/
+    val latLng:List<LatLng>
 
 
 )
